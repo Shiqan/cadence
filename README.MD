@@ -4,13 +4,23 @@ A simple metronome app for runners built with Flutter.
 
 ## About
 
-Cadence helps runners maintain a consistent step rate by providing an audible beat to match their stride rhythm.
+Cadence helps you maintain a consistent step rate by providing an audible beat to match your stride rhythm. This can improve efficiency, reduce injury risk, and enhance endurance.
 
 ## Features
 
 - Adjustable BPM (beats per minute)
 - Simple, clean interface
 - Audio metronome
+
+## Screenshots
+
+<p float="left">
+  <img src="screenshots/light.png" alt="Light theme" width="48%" style="margin-right:2%" />
+  <img src="screenshots/dark.png" alt="Dark theme" width="48%" />
+</p>
+
+<!-- Fallback for clients that don't honor float:left -->
+<div style="clear:both"></div>
 
 ## Getting Started
 
@@ -29,8 +39,4 @@ fvm flutter pub get
 
 ## License
 
-MIT License - see LICENSE file for details
-
-## Contributing
-
-This is a hobby project, but contributions are welcome! Feel free to open issues or submit pull requests.
+Licensed under the [MIT License](LICENSE).
