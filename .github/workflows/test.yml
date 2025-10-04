@@ -17,10 +17,10 @@ jobs:
       uses: kuhnroyal/flutter-fvm-config-action@v2
     
     - name: Install dependencies
-      run: flutter pub get
+      run: fvm flutter pub get
     
     - name: Analyze code
-      run: flutter analyze
+      run: fvm flutter analyze
     
     - name: Run tests
-      run: flutter test
+      run: fvm flutter test
