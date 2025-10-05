@@ -46,9 +46,32 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Start'), findsOneWidget);
-  }); 
-  
-   testWidgets('BPM text remains unchanged during tick',
+  });
+
+  testWidgets('tapping theme toggle switches between light and dark',
+      (tester) async {
+    await tester.pumpWidget(const CadenceApp());
+    await tester.pumpAndSettle();
+
+    var app = tester.widget<MaterialApp>(find.byType(MaterialApp));
+    expect(app.themeMode, ThemeMode.light);
+
+    final toggle = find.byTooltip('Toggle theme');
+    expect(toggle, findsOneWidget);
+    await tester.tap(toggle);
+    await tester.pumpAndSettle();
+
+    app = tester.widget<MaterialApp>(find.byType(MaterialApp));
+    expect(app.themeMode, ThemeMode.dark);
+
+    await tester.tap(toggle);
+    await tester.pumpAndSettle();
+
+    app = tester.widget<MaterialApp>(find.byType(MaterialApp));
+    expect(app.themeMode, ThemeMode.light);
+  });
+
+  testWidgets('BPM text remains unchanged during tick',
       (WidgetTester tester) async {
     await tester.pumpWidget(const CadenceApp());
 
