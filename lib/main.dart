@@ -16,7 +16,7 @@ class CadenceApp extends StatefulWidget {
 }
 
 class _CadenceAppState extends State<CadenceApp> {
-  ThemeMode _themeMode = ThemeMode.light;
+  ThemeMode _themeMode = ThemeMode.system;
 
   @override
   Widget build(BuildContext context) {
@@ -45,8 +45,19 @@ class _CadenceAppState extends State<CadenceApp> {
       darkTheme: dark,
       themeMode: _themeMode,
       home: HomePage(
-        onToggleTheme: () => setState(() => _themeMode =
-            _themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light),
+        onToggleTheme: () => setState(() {
+          if (_themeMode == ThemeMode.system) {
+            final brightness =
+                WidgetsBinding.instance.platformDispatcher.platformBrightness;
+            _themeMode = brightness == Brightness.dark
+                ? ThemeMode.light
+                : ThemeMode.dark;
+          } else {
+            _themeMode = _themeMode == ThemeMode.light
+                ? ThemeMode.dark
+                : ThemeMode.light;
+          }
+        }),
       ),
     );
   }
