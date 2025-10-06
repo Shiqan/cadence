@@ -9,8 +9,9 @@ Cadence helps you maintain a consistent step rate by providing an audible beat t
 ## Features
 
 - Adjustable BPM (beats per minute)
-- Simple, clean interface
-- Audio metronome
+- Simple, clean interface  (it's just a number and some buttons - we're not launching rockets here)
+- No ads, no tracking, no permissions (just you, the beat, and questionable life choices at 6 AM)
+- Free forever (because charging for beeps feels morally wrong)
 
 ## Screenshots
 
@@ -19,14 +20,11 @@ Cadence helps you maintain a consistent step rate by providing an audible beat t
   <img src="screenshots/dark.png" alt="Dark theme" width="48%" />
 </p>
 
-<!-- Fallback for clients that don't honor float:left -->
-<div style="clear:both"></div>
-
 ## Getting Started
 
 ### Prerequisites
 
-- Flutter SDK
+- Flutter SDK (fvm)
 - Dart
 
 ### Installation

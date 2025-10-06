@@ -73,13 +73,12 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
-  // Use ValueNotifiers so the UI can react without calling setState directly.
-  final ValueNotifier<double> _bpm = ValueNotifier<double>(160); // default
+  final ValueNotifier<double> _bpm = ValueNotifier<double>(160);
   final ValueNotifier<bool> _running = ValueNotifier<bool>(false);
   Timer? _timer;
   late AnimationController _pulseController;
   late AudioPlayer _audioPlayer;
-  // Counter used to play audio at half speed (one click every 2 visual beats).
+  
   int _audioTickCounter = 0;
 
   @override
@@ -89,8 +88,7 @@ class _HomePageState extends State<HomePage>
       vsync: this,
       duration: const Duration(milliseconds: 300),
     );
-    // Prepare a short click sound. Loading may fail if the asset isn't present;
-    // that's non-fatal — the app will continue without sound.
+
     _audioPlayer = AudioPlayer();
     _audioPlayer.setAsset('assets/click.wav').catchError((e) {
       debugPrint('Failed to load click asset: $e');
@@ -137,15 +135,11 @@ class _HomePageState extends State<HomePage>
   }
 
   void _tick() {
-    // beat pulse: only trigger visual pulse on the same ticks we play audio
-    // so the visual indicator matches the audible half-speed cadence.
     if (_audioTickCounter % 2 == 0) {
       _pulseController.forward(from: 0);
     }
 
     try {
-      // Play audio only on every other tick so the perceived metronome
-      // click is at half the displayed BPM (one click per two visual beats).
       if (_audioTickCounter % 2 == 0) {
         _audioPlayer.seek(Duration.zero);
         _audioPlayer.play();
