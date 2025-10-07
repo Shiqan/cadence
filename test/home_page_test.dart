@@ -3,6 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:cadence/main.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   testWidgets('shows default BPM (160) on startup', (tester) async {
     await tester.pumpWidget(const CadenceApp());
     await tester.pumpAndSettle();
@@ -77,39 +79,40 @@ void main() {
     expect(app.themeMode, ThemeMode.dark);
   });
 
-  testWidgets('tapping theme toggle switches between light and dark when system is dark',
-    (tester) async {
-  tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
-  
-  await tester.pumpWidget(const CadenceApp());
-  await tester.pumpAndSettle();
+  testWidgets(
+      'tapping theme toggle switches between light and dark when system is dark',
+      (tester) async {
+    tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
 
-  var app = tester.widget<MaterialApp>(find.byType(MaterialApp));
-  expect(app.themeMode, ThemeMode.system);
+    await tester.pumpWidget(const CadenceApp());
+    await tester.pumpAndSettle();
 
-  final toggle = find.byTooltip('Toggle theme');
-  expect(toggle, findsOneWidget);
-  
-  await tester.tap(toggle);
-  await tester.pumpAndSettle();
+    var app = tester.widget<MaterialApp>(find.byType(MaterialApp));
+    expect(app.themeMode, ThemeMode.system);
 
-  app = tester.widget<MaterialApp>(find.byType(MaterialApp));
-  expect(app.themeMode, ThemeMode.light);
+    final toggle = find.byTooltip('Toggle theme');
+    expect(toggle, findsOneWidget);
 
-  await tester.tap(toggle);
-  await tester.pumpAndSettle();
+    await tester.tap(toggle);
+    await tester.pumpAndSettle();
 
-  app = tester.widget<MaterialApp>(find.byType(MaterialApp));
-  expect(app.themeMode, ThemeMode.dark);
-  
-  await tester.tap(toggle);
-  await tester.pumpAndSettle();
+    app = tester.widget<MaterialApp>(find.byType(MaterialApp));
+    expect(app.themeMode, ThemeMode.light);
 
-  app = tester.widget<MaterialApp>(find.byType(MaterialApp));
-  expect(app.themeMode, ThemeMode.light);
-  
-  tester.platformDispatcher.clearPlatformBrightnessTestValue();
-});
+    await tester.tap(toggle);
+    await tester.pumpAndSettle();
+
+    app = tester.widget<MaterialApp>(find.byType(MaterialApp));
+    expect(app.themeMode, ThemeMode.dark);
+
+    await tester.tap(toggle);
+    await tester.pumpAndSettle();
+
+    app = tester.widget<MaterialApp>(find.byType(MaterialApp));
+    expect(app.themeMode, ThemeMode.light);
+
+    tester.platformDispatcher.clearPlatformBrightnessTestValue();
+  });
 
   testWidgets('BPM text remains unchanged during tick',
       (WidgetTester tester) async {

@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:just_audio/just_audio.dart';
+import 'package:flutter_soloud/flutter_soloud.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -9,7 +9,7 @@ void main() async {
 }
 
 class CadenceApp extends StatefulWidget {
-  const CadenceApp({Key? key}) : super(key: key);
+  const CadenceApp({super.key});
 
   @override
   State<CadenceApp> createState() => _CadenceAppState();
@@ -65,7 +65,7 @@ class _CadenceAppState extends State<CadenceApp> {
 
 class HomePage extends StatefulWidget {
   final VoidCallback onToggleTheme;
-  const HomePage({Key? key, required this.onToggleTheme}) : super(key: key);
+  const HomePage({super.key, required this.onToggleTheme});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -77,8 +77,10 @@ class _HomePageState extends State<HomePage>
   final ValueNotifier<bool> _running = ValueNotifier<bool>(false);
   Timer? _timer;
   late AnimationController _pulseController;
-  late AudioPlayer _audioPlayer;
-  
+  SoLoud? _audioPlayer;
+  AudioSource? _audioSource;
+  bool _audioInitialized = false;
+
   int _audioTickCounter = 0;
 
   @override
@@ -89,18 +91,34 @@ class _HomePageState extends State<HomePage>
       duration: const Duration(milliseconds: 300),
     );
 
-    _audioPlayer = AudioPlayer();
-    _audioPlayer.setAsset('assets/click.wav').catchError((e) {
-      debugPrint('Failed to load click asset: $e');
-      return null;
-    });
+    initialize();
+  }
+
+  Future<void> initialize() async {
+    if (_audioInitialized) {
+      return;
+    }
+    try {
+      _audioPlayer = SoLoud.instance;
+
+      await _audioPlayer?.init(bufferSize: 20);
+      _audioSource = await _audioPlayer?.loadAsset(
+        'assets/click.wav',
+        mode: LoadMode.memory,
+      );
+
+      _audioInitialized = true;
+    } catch (e) {
+      // ignore errors - audio won't play
+      debugPrint('Audio initialization failed: $e');
+    }
   }
 
   @override
   void dispose() {
     _timer?.cancel();
     _pulseController.dispose();
-    _audioPlayer.dispose();
+    _audioPlayer?.deinit();
     _bpm.dispose();
     _running.dispose();
     super.dispose();
@@ -123,9 +141,6 @@ class _HomePageState extends State<HomePage>
     if (_pulseController.isAnimating || _pulseController.value != 0.0) {
       _pulseController.reset();
     }
-
-    // Stop any playing click immediately.
-    _audioPlayer.stop();
   }
 
   void _scheduleTimer() {
@@ -137,17 +152,13 @@ class _HomePageState extends State<HomePage>
   void _tick() {
     if (_audioTickCounter % 2 == 0) {
       _pulseController.forward(from: 0);
+
+      if (_audioSource != null) {
+        _audioPlayer?.play(_audioSource!);
+      }
     }
 
-    try {
-      if (_audioTickCounter % 2 == 0) {
-        _audioPlayer.seek(Duration.zero);
-        _audioPlayer.play();
-      }
-      _audioTickCounter = (_audioTickCounter + 1) % 2;
-    } catch (e) {
-      // ignore audio errors
-    }
+    _audioTickCounter = (_audioTickCounter + 1) % 2;
   }
 
   void _onBpmChanged(double value) {
